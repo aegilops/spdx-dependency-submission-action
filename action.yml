@@ -16,7 +16,19 @@ inputs:
   correlator:
     description: 'The correlator property itself is the primary field used to keep independent submissions distinct.'
     required: false
-    default: ${{ github.job }} 
+    default: ${{ github.job }}
+  ref:
+    description: 'The ref for the submission. Defaults to the current branch.'
+    required: false
+    default: ${{ github.ref }}
+  commit:
+    description: 'The commit for the submission. Defaults to the current commit.'
+    required: false
+    default: ${{ github.sha }}
+  repository:
+    description: 'The repository for the submission. Defaults to the current repository.'
+    required: false
+    default: ${{ github.repository }}
 runs:
   using: 'node20'
   main: 'dist/index.js'
