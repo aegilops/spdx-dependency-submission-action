@@ -21,8 +21,8 @@ inputs:
     description: 'The ref for the submission. Defaults to the current branch.'
     required: false
     default: ${{ github.ref }}
-  commit:
-    description: 'The commit for the submission. Defaults to the current commit.'
+  sha:
+    description: 'The commit SHA for the submission. Defaults to the current commit SHA.'
     required: false
     default: ${{ github.sha }}
   repository:
