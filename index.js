@@ -30,6 +30,13 @@ async function run() {
 
     core.notice(`Submitting snapshot for ref ${ref}`);
 
+    const gitRemote = execFileSync('git', ['remote', '-v'], {
+      stdio: 'pipe',
+      encoding: 'utf8',
+    });
+
+    core.info(`git remote output: ${gitRemote}`);
+
     // get the SHA of the ref, using git
     const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', ref], {
         stdio: 'pipe',
