@@ -35624,7 +35624,7 @@ async function run() {
     sha = execFileSync('git', ['show', '-s', '--format="%H"', 'FETCH_HEAD'], {
         stdio: 'pipe',
         encoding: 'utf8',
-      }).trim().trim('"');
+      }).trim().replace(/"/g, '');
 
     context.ref = ref;
     context.sha = sha;
