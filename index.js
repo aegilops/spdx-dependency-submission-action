@@ -28,15 +28,6 @@ async function run() {
       ref = `refs/heads/${ref}`;
     }
 
-    core.notice(`Submitting snapshot for ref ${ref}`);
-
-    const gitRemote = execFileSync('git', ['remote', '-v'], {
-      stdio: 'pipe',
-      encoding: 'utf8',
-    });
-
-    core.info(`git remote output: ${gitRemote}`);
-
     // Get the SHA of the ref, using git
     // Just fetch one commit deep, to avoid pulling in the whole history
     const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', ref], {
@@ -70,7 +61,7 @@ async function run() {
   if (ref != '') {
     snapshot.ref = ref;
     snapshot.sha = sha;
-    core.notice(`Submitting snapshot for ref ${snapshot.ref} and HEAD SHA ${snapshot.sha}`);
+    core.notice(`Submitting snapshot from ref ${github.context.ref} to HEAD of ref ${snapshot.ref}`);
   }
 
   manifests?.forEach(manifest => {
