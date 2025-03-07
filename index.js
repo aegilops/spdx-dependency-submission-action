@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const fs = require('fs');
-const glob = require('glob');
+const { execFileSync } = require('node:child_process');
 
 const toolkit = require('@github/dependency-submission-toolkit');
 const lib = require('./lib');
@@ -13,18 +12,29 @@ async function run() {
 
   const correlator = core.getInput('correlator');
 
-  // shallow clone of the github context, then override defaults with inputs
+  // shallow clone of the github context, then override defaults with inputs, if present
   // only including what we need of the context, for using with the submission toolkit, vs a full deep clone
   let context = Object.assign({}, github.context);
   context.repo = Object.assign({}, github.context.repo);
 
-  const ref = core.getInput('ref');
-  const sha = core.getInput('sha');
+  let ref = core.getInput('ref');
+  let sha = '';
 
+  // if ref is set, override context with ref and SHA of HEAD of that ref
   if (ref != '') {
+
+    // make sure ref is in the form refs/heads/<branch>
+    if (!ref.startsWith('refs/')) {
+      ref = `refs/heads/${ref}`;
+    }
+
+    // get the SHA of the ref, using git
+    sha = execFileSync('git', ['show', '-s', '--format="%H"', ref], {
+        stdio: 'pipe',
+        encoding: 'utf8',
+      }).trim();
+
     context.ref = ref;
-  }
-  if (sha != '') {
     context.sha = sha;
   }
 
@@ -39,16 +49,11 @@ async function run() {
       id: github.context.runId.toString()
     });
 
-  // override generated Snapshot with inputs, if they are present
+  // override generated Snapshot with input ref and corresponding SHA, if set
   if (ref != '') {
     snapshot.ref = ref;
-  }
-  if (sha != '') {
     snapshot.sha = sha;
-  }
-
-  if (ref == '' || sha == '') {
-    core.notice(`Submitting snapshot for ref ${snapshot.ref} and SHA ${snapshot.sha}`);
+    core.notice(`Submitting snapshot for ref ${snapshot.ref} and HEAD SHA ${snapshot.sha}`);
   }
 
   manifests?.forEach(manifest => {

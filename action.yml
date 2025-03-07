@@ -18,11 +18,7 @@ inputs:
     required: false
     default: ${{ github.job }}
   ref:
-    description: 'The ref for the submission. Defaults to the current branch.'
-    required: false
-    default: ''
-  sha:
-    description: 'The commit SHA for the submission. Defaults to the current commit SHA.'
+    description: 'The target ref for the submission, e.g. "refs/heads/main" or "main". Defaults to the current branch.'
     required: false
     default: ''
 runs:
