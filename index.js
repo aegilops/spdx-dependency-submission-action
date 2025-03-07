@@ -6,7 +6,7 @@ const glob = require('glob');
 const toolkit = require('@github/dependency-submission-toolkit');
 const lib = require('./lib');
 
-const VERSION = "0.1.1";
+const VERSION = "0.2.0-extra-inputs";
 
 async function run() {
   let manifests = lib.getManifestsFromSpdxFiles(lib.searchFiles());
@@ -29,7 +29,7 @@ async function run() {
   let snapshot = new toolkit.Snapshot({
     name: "spdx-to-dependency-graph-action",
     version: VERSION,
-    url: "https://github.com/advanced-security/spdx-dependency-submission-action",
+    url: "https://github.com/aegilops/spdx-dependency-submission-action",
   },
     context,
     {
@@ -46,6 +46,9 @@ async function run() {
   }
 
   core.info(snapshot);
+  core.notice(snapshot.ref);
+  core.notice(snapshot.sha);
+  core.notice(snapshot.toString())
 
   manifests?.forEach(manifest => {
     snapshot.addManifest(manifest);
