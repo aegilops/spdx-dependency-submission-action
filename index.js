@@ -37,15 +37,16 @@ async function run() {
 
     core.info(`git remote output: ${gitRemote}`);
 
-    // get the SHA of the ref, using git
+    // Get the SHA of the ref, using git
+    // Just fetch one commit deep, to avoid pulling in the whole history
     const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', ref], {
         stdio: 'pipe',
         encoding: 'utf8',
       });
 
-    core.notice(`git fetch output: ${gitFetch}`);
+    core.debug(`git fetch output: ${gitFetch}`);
 
-    sha = execFileSync('git', ['show', '-s', '--format="%H"', ref], {
+    sha = execFileSync('git', ['show', '-s', '--format="%H"', 'FETCH_HEAD'], {
         stdio: 'pipe',
         encoding: 'utf8',
       }).trim();
