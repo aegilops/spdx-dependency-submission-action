@@ -35582,7 +35582,9 @@ async function run() {
   const correlator = core.getInput('correlator');
 
   // shallow clone of the github context, then override defaults with inputs
+  // only including what we need of the context, for using with the submission toolkit, vs a full deep clone
   let context = Object.assign({}, github.context);
+  context.repo = Object.assign({}, github.context.repo);
 
   const ref = core.getInput('ref');
   const sha = core.getInput('sha');
@@ -35613,10 +35615,9 @@ async function run() {
     snapshot.sha = sha;
   }
 
-  core.info(snapshot);
-  core.notice(snapshot.ref);
-  core.notice(snapshot.sha);
-  core.notice(snapshot.toString())
+  if (ref == '' || sha == '') {
+    core.notice(`Submitting snapshot for ref ${snapshot.ref} and SHA ${snapshot.sha}`);
+  }
 
   manifests?.forEach(manifest => {
     snapshot.addManifest(manifest);
