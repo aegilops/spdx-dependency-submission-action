@@ -28,13 +28,15 @@ async function run() {
       ref = `refs/heads/${ref}`;
     }
 
+    core.notice(`Submitting snapshot for ref ${ref}`);
+
     // get the SHA of the ref, using git
     const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', ref], {
         stdio: 'pipe',
         encoding: 'utf8',
       });
 
-    core.debug(`git fetch output: ${gitFetch}`);
+    core.notice(`git fetch output: ${gitFetch}`);
 
     sha = execFileSync('git', ['show', '-s', '--format="%H"', ref], {
         stdio: 'pipe',
