@@ -35653,7 +35653,7 @@ async function run() {
 
     // if we're submitted to another ref, override the manifest to add a prefix of the source ref
     if (ref != '') {
-      manifest.file.source_location = ref + ':' + manifest.file.source_location;
+      manifest.file.source_location = github.context.ref + ':' + manifest.file.source_location;
     }
 
     snapshot.addManifest(manifest);
