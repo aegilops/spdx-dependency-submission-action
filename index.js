@@ -29,7 +29,7 @@ async function run() {
     }
 
     // get the SHA of the ref, using git
-    const gitFetch = execFileSync('git', ['fetch', '--depth=1', ref], {
+    const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', ref], {
         stdio: 'pipe',
         encoding: 'utf8',
       });
