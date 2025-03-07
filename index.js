@@ -74,6 +74,13 @@ async function run() {
   }
 
   manifests?.forEach(manifest => {
+    core.debug(JSON.stringify(manifest));
+
+    // if we're submitted to another ref, override the manifest to add a prefix of the source ref
+    if (ref != '') {
+      manifest.file.source_location = ref + ':' + manifest.file.source_location;
+    }
+
     snapshot.addManifest(manifest);
   });
   
