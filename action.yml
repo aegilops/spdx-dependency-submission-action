@@ -20,15 +20,11 @@ inputs:
   ref:
     description: 'The ref for the submission. Defaults to the current branch.'
     required: false
-    default: ${{ github.ref }}
+    default: ''
   sha:
     description: 'The commit SHA for the submission. Defaults to the current commit SHA.'
     required: false
-    default: ${{ github.sha }}
-  repository:
-    description: 'The repository for the submission. Defaults to the current repository.'
-    required: false
-    default: ${{ github.repository }}
+    default: ''
 runs:
   using: 'node20'
   main: 'dist/index.js'

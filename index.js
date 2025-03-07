@@ -20,9 +20,12 @@ async function run() {
   const sha = core.getInput('sha');
   const repository = core.getInput('repository');
 
-  context.ref = ref;
-  context.sha = sha;
-  context.repo = repository;
+  if (ref != '') {
+    context.ref = ref;
+  }
+  if (sha != '') {
+    context.sha = sha;
+  }
 
   let snapshot = new toolkit.Snapshot({
     name: "spdx-to-dependency-graph-action",
@@ -34,6 +37,14 @@ async function run() {
       correlator: correlator,
       id: github.context.runId.toString()
     });
+
+  // override generated Snapshot with inputs, if they are present
+  if (ref != '') {
+    snapshot.ref = ref;
+  }
+  if (sha != '') {
+    snapshot.sha = sha;
+  }
 
   manifests?.forEach(manifest => {
     snapshot.addManifest(manifest);
