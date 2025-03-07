@@ -18,7 +18,6 @@ async function run() {
 
   const ref = core.getInput('ref');
   const sha = core.getInput('sha');
-  const repository = core.getInput('repository');
 
   if (ref != '') {
     context.ref = ref;
@@ -45,6 +44,8 @@ async function run() {
   if (sha != '') {
     snapshot.sha = sha;
   }
+
+  core.info(snapshot);
 
   manifests?.forEach(manifest => {
     snapshot.addManifest(manifest);
