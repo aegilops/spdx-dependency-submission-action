@@ -35,7 +35,7 @@ jobs:
         name: sbom
         path: _manifest/spdx_2.2
     - name: SBOM upload 
-      uses: advanced-security/spdx-dependency-submission-action@v0.1.1
+      uses: advanced-security/spdx-dependency-submission-action@v0.1.2
       with:
         filePath: "_manifest/spdx_2.2/"
 ```
@@ -51,11 +51,29 @@ Add support for running inside a matrix by overriding the default correlater uni
             echo "correlator=$correlator" >> $GITHUB_OUTPUT
 
       - name: SBOM upload
-        uses: advanced-security/spdx-dependency-submission-action@v0.1.1
+        uses: advanced-security/spdx-dependency-submission-action@v0.1.2
         with:
           filePath: "${{ matrix.sbom }}"
           correlator: ${{ steps.matrix_parser.outputs.correlator }}
 ```
+
+You can submit a dependency graph to the default branch from a different branch by specifying the `ref` input of the default branch.
+
+This automatically sets the "correlator" to the name of the branch you are running the workflow on, and submits the dependency submission to the current HEAD SHA of the ref given. The manifest location is modified to prepend the branch name that the workflow is run on, plus a `:`, so that any Dependabot alerts generated from the branch are traceable.
+
+If a ref is given as a bare branch name such as `main`, then `refs/heads/` is prepended.
+
+For example, if we run a step in a workflow on the `this-is-a-branch` branch:
+
+```yaml
+      - name: SBOM upload
+        uses: advanced-security/spdx-dependency-submission-action@v0.1.2
+        with:
+          filePath: sbom.json
+          ref: main
+```
+
+That will upload the submission to the HEAD commit of `refs/heads/main`, with the manifest given as `this-is-a-branch:sbom.json`.
 
 ## Support
 
