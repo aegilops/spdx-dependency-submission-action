@@ -20,6 +20,7 @@ async function run() {
   let submit_ref = core.getInput('submitRef');
   let sha = ''
   let scanned_label = core.getInput('scannedLabel');
+  let manifest_label = ''
 
   // if submit ref is set, override context with ref and SHA of HEAD of that ref
   if (submit_ref != '') {
@@ -29,6 +30,8 @@ async function run() {
     if (scanned_label != '') {
       core.debug(`scanned_label set: ${scanned_label}`);
     }
+
+    manifest_label = ((scanned_label != '') ? scanned_label : github.context.ref).replace('refs/heads/', '').replace('refs/tags/', '');
 
     // make sure ref is in the form refs/heads/<branch>
     if (!submit_ref.startsWith('refs/')) {
@@ -68,7 +71,7 @@ async function run() {
   if (submit_ref != '') {
     snapshot.ref = submit_ref;
     snapshot.sha = sha;
-    core.notice(`Submitting snapshot from ref ${github.context.ref} to HEAD of ref ${snapshot.ref}`);
+    core.notice(`Submitting snapshot from ${manifest_label} to HEAD of ref ${snapshot.ref}`);
   }
 
   manifests?.forEach(manifest => {
@@ -77,8 +80,7 @@ async function run() {
     // if we're submitting to another ref, override the manifest to add a prefix of the source ref
     // remove the refs/heads/ or refs/tags/ prefix from the ref, if it is present
     if (submit_ref != '') {
-      const submit_ref = ((scanned_label != '') ? scanned_label : github.context.ref).replace('refs/heads/', '').replace('refs/tags/', '');
-      manifest.file.source_location = submit_ref + ':' + manifest.file.source_location;
+      manifest.file.source_location = manifest_label + ':' + manifest.file.source_location;
 
       core.debug(`Manifest source location updated to ${manifest.file.source_location}`);
     }
