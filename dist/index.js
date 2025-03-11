@@ -35592,20 +35592,27 @@ async function run() {
   let context = Object.assign({}, github.context);
   context.repo = Object.assign({}, github.context.repo);
 
-  let ref = core.getInput('ref');
-  let sha = '';
+  let submit_ref = core.getInput('submitRef');
+  let sha = ''
+  let scanned_ref = core.getInput('scannedRef');
 
-  // if ref is set, override context with ref and SHA of HEAD of that ref
-  if (ref != '') {
+  // if submit ref is set, override context with ref and SHA of HEAD of that ref
+  if (submit_ref != '') {
+
+    core.debug(`submit_ref set: ${submit_ref}`);
+
+    if (scanned_ref != '') {
+      core.debug(`scanned_ref set: ${scanned_ref}`);
+    }
 
     // make sure ref is in the form refs/heads/<branch>
-    if (!ref.startsWith('refs/')) {
-      ref = `refs/heads/${ref}`;
+    if (!submit_ref.startsWith('refs/')) {
+      submit_ref = `refs/heads/${submit_ref}`;
     }
 
     // Get the SHA of the ref, using git
     // Just fetch one commit deep, to avoid pulling in the whole history
-    const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', ref], {
+    const gitFetch = execFileSync('git', ['fetch', '--depth=1', 'origin', submit_ref], {
         stdio: 'pipe',
         encoding: 'utf8',
       });
@@ -35617,7 +35624,7 @@ async function run() {
         encoding: 'utf8',
       }).trim().replace(/"/g, '');
 
-    context.ref = ref;
+    context.ref = submit_ref;
     context.sha = sha;
   }
 
@@ -35633,8 +35640,8 @@ async function run() {
     });
 
   // override generated Snapshot with input ref and corresponding SHA, if set
-  if (ref != '') {
-    snapshot.ref = ref;
+  if (submit_ref != '') {
+    snapshot.ref = submit_ref;
     snapshot.sha = sha;
     core.notice(`Submitting snapshot from ref ${github.context.ref} to HEAD of ref ${snapshot.ref}`);
   }
@@ -35642,11 +35649,13 @@ async function run() {
   manifests?.forEach(manifest => {
     core.debug(JSON.stringify(manifest));
 
-    // if we're submitted to another ref, override the manifest to add a prefix of the source ref
-    // remove the refs/heads/ prefix from the ref, if it is present
-    if (ref != '') {
-      const submit_ref = github.context.ref.replace('refs/heads/', '');
+    // if we're submitting to another ref, override the manifest to add a prefix of the source ref
+    // remove the refs/heads/ or refs/tags/ prefix from the ref, if it is present
+    if (submit_ref != '') {
+      const submit_ref = ((scanned_ref != '') ? scanned_ref : github.context.ref).replace('refs/heads/', '').replace('refs/tags/', '');
       manifest.file.source_location = submit_ref + ':' + manifest.file.source_location;
+
+      core.debug(`Manifest source location updated to ${manifest.file.source_location}`);
     }
 
     snapshot.addManifest(manifest);
