@@ -21,8 +21,14 @@ async function run() {
   let sha = ''
   let scanned_ref = core.getInput('scannedRef');
 
-  // if ref is set, override context with ref and SHA of HEAD of that ref
+  // if submit ref is set, override context with ref and SHA of HEAD of that ref
   if (submit_ref != '') {
+
+    core.debug(`submit_ref set: ${submit_ref}`);
+
+    if (scanned_ref != '') {
+      core.debug(`scanned_ref set: ${scanned_ref}`);
+    }
 
     // make sure ref is in the form refs/heads/<branch>
     if (!submit_ref.startsWith('refs/')) {
