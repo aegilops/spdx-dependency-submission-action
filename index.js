@@ -71,8 +71,10 @@ async function run() {
     // if we're submitting to another ref, override the manifest to add a prefix of the source ref
     // remove the refs/heads/ or refs/tags/ prefix from the ref, if it is present
     if (submit_ref != '') {
-      const submit_ref = (scanned_ref != '' ? scanned_ref : github.context.ref).replace('refs/heads/', '').replace('refs/tags/', '');
+      const submit_ref = ((scanned_ref != '') ? scanned_ref : github.context.ref).replace('refs/heads/', '').replace('refs/tags/', '');
       manifest.file.source_location = submit_ref + ':' + manifest.file.source_location;
+
+      core.debug(`Manifest source location updated to ${manifest.file.source_location}`);
     }
 
     snapshot.addManifest(manifest);
