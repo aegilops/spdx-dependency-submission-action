@@ -18,11 +18,11 @@ inputs:
     required: false
     default: ${{ github.job }}
   submitRef:
-    description: 'The target ref for the submission, e.g. "refs/heads/main" or "main". Defaults to the current branch if not set.'
+    description: 'The target ref for the submission, e.g. "refs/heads/main" or "main". Defaults to the current ref if not set.'
     required: false
     default: ''
-  scannedRef:
-    description: 'The ref used to generate the submission, e.g. "refs/heads/a-branch" or "a-branch". Defaults to the current branch if not set.'
+  scannedLabel:
+    description: 'A label to add to each manifest in the submission, e.g. "a-branch". Defaults to the current ref if not set.'
     required: false
     default: ''
 runs:
