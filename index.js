@@ -10,7 +10,7 @@ const VERSION = "0.2.0-extra-inputs";
 async function run() {
   let manifests = lib.getManifestsFromSpdxFiles(lib.searchFiles());
 
-  const correlator = core.getInput('correlator');
+  let correlator = core.getInput('correlator');
 
   // shallow clone of the github context, then override defaults with inputs, if present
   // only including what we need of the context, for using with the submission toolkit, vs a full deep clone
@@ -32,6 +32,8 @@ async function run() {
     }
 
     manifest_label = ((scanned_label != '') ? scanned_label : github.context.ref).replace('refs/heads/', '').replace('refs/tags/', '');
+
+    correlator += `;manifest_label=${manifest_label};submit_ref=${submit_ref}`;
 
     // make sure ref is in the form refs/heads/<branch>
     if (!submit_ref.startsWith('refs/')) {
