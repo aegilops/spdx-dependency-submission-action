@@ -40,7 +40,9 @@ jobs:
         filePath: "_manifest/spdx_2.2/"
 ```
 
-Add support for running inside a matrix by overriding the default correlater unique identifier to include the job+matrix values.  Consider these sample steps:
+### Running inside a matrix
+
+Add support for running inside a matrix by overriding the default `correlater` unique identifier to include the job+matrix values. Consider these sample steps:
 
 ```yaml
       # Format corrleator as "job(matrixvalue1, matrixvalue2, ... )" or just "job" with a null matrix
@@ -57,7 +59,9 @@ Add support for running inside a matrix by overriding the default correlater uni
           correlator: ${{ steps.matrix_parser.outputs.correlator }}
 ```
 
-You can submit a dependency graph to the default branch from a different branch or a non-HEAD tag. This allows you to see Dependabot alerts on places other than the HEAD of the default branch.
+### Submitting non-HEAD refs and other branches to the default branch
+
+To let you to see Dependabot alerts on places other than the HEAD of the default branch, you can submit a dependency graph to the default branch from a different branch or a non-HEAD tag. This is not directly supported by Dependabot, but this Action uses a workaround to enable it.
 
 You can specify the `submitRef` input, which should be the name of the default branch, and the optional `scannedLabel` input is used to describe what was scanned. If `scannedLabel` is not provided, then the current ref is used instead.
 
